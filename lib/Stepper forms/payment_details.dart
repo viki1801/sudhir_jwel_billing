@@ -94,7 +94,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       //"₹ ${grossAmount.toStringAsFixed(2)}",
-                      "₹ ${totalAmount}",
+                      "₹ $totalAmount",
                       style: const TextStyle(
                         fontSize: 34.9,
                         fontWeight: FontWeight.bold,
