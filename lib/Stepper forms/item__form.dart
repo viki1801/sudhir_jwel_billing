@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sudhir_jwel_billing/Custom%20Widgets/stepper_textfield.dart';
 
 class ItemForm extends StatefulWidget {
-
   final TextEditingController itemNameController;
   final TextEditingController itemPriceController;
   final TextEditingController itemGrossWeightController;
@@ -14,6 +13,7 @@ class ItemForm extends StatefulWidget {
   final TextEditingController ratePerGramController;
   final TextEditingController otherChargesController;
   final Function(double) onItemPriceChanged;
+  final Function(String) onImagePathChanged;
 
   const ItemForm({
     super.key,
@@ -26,6 +26,7 @@ class ItemForm extends StatefulWidget {
     required this.itemPcsController,
     required this.ratePerGramController,
     required this.otherChargesController,
+    required this.onImagePathChanged,
   });
 
   @override
@@ -33,7 +34,6 @@ class ItemForm extends StatefulWidget {
 }
 
 class _ItemFormState extends State<ItemForm> {
-
   String selectedImagePath = '';
   double itemPrice = 0.0;
 
@@ -48,7 +48,7 @@ class _ItemFormState extends State<ItemForm> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // item image
-                selectedImagePath == ''
+                selectedImagePath.isEmpty
                     ? Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.0),
@@ -60,25 +60,25 @@ class _ItemFormState extends State<ItemForm> {
                 )
                     : ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                      child: Image.file(
-                                        File(selectedImagePath),
-                                        height: 180,
-                                        width: 300,
-                                        fit: BoxFit.cover,
-                                      ),
-                    ),
+                  child: Image.file(
+                    File(selectedImagePath),
+                    height: 180,
+                    width: 300,
+                    fit: BoxFit.cover,
+                  ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.black87),
                   ),
                   onPressed: () async {
-                    selectImage();
-                    setState(() {});
+                    await selectImage();
                   },
-                  child: const Text("Select",style: TextStyle(
-                    color: Colors.white
-                  ),),
+                  child: const Text(
+                    "Select",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -91,7 +91,6 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Item name",
           keyboardType: TextInputType.text,
         ),
-
         // Item purity
         StepperTextField(
           icon: Icons.water_drop,
@@ -99,15 +98,13 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Item purity",
           keyboardType: TextInputType.text,
         ),
-
-        // Item Peaces
+        // Item Pieces
         StepperTextField(
           icon: Icons.line_weight,
           controller: widget.itemPcsController,
-          labeltext: "How many peaces",
+          labeltext: "How many pieces",
           keyboardType: TextInputType.number,
         ),
-
         // Item Gross weight
         StepperTextField(
           icon: Icons.line_weight,
@@ -115,7 +112,6 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Gross Wt",
           keyboardType: TextInputType.number,
         ),
-
         // Item Net weight
         StepperTextField(
           icon: Icons.line_weight,
@@ -123,7 +119,6 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Net Wt",
           keyboardType: TextInputType.number,
         ),
-
         // Rate Per gram
         StepperTextField(
           icon: Icons.line_weight,
@@ -131,7 +126,6 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Rate [Per Gm]",
           keyboardType: TextInputType.number,
         ),
-
         // Other Charges
         StepperTextField(
           icon: Icons.line_weight,
@@ -139,7 +133,6 @@ class _ItemFormState extends State<ItemForm> {
           labeltext: "Other Charges",
           keyboardType: TextInputType.number,
         ),
-
         // Item Price
         Row(
           children: [
@@ -176,127 +169,112 @@ class _ItemFormState extends State<ItemForm> {
             const SizedBox(height: 15),
           ],
         ),
-
       ],
     );
   }
 
-  //Method for selecting image
-  Future selectImage(){
-    return showDialog(context: context, builder: (BuildContext context){
-      return Dialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0)),
-        child: SizedBox(
-          height: 150,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                const Text('Select Image From',
-                  style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.normal
-                  ),),
-
-                const SizedBox(height: 10,),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                        onTap: ()async{
-                          selectedImagePath = await selectImageFromGallery();
-                          if(selectedImagePath != ''){
-                            Navigator.pop(context);
-                            setState(() {});
-                          }else{
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("No Image Selected...!"),));
-                          }
+  Future<void> selectImage() async {
+    final path = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: SizedBox(
+            height: 150,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  const Text(
+                    'Select Image From',
+                    style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () async {
+                          Navigator.pop(context, await selectImageFromGallery());
                         },
-                        child:const Padding(padding: EdgeInsets.all(8.0),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              Icon(Icons.image,size: 40),
+                              Icon(Icons.image, size: 40),
+                              Text('Gallery'),
                             ],
                           ),
-                        )
-                    ),
-
-                    GestureDetector(
-                      onTap: ()async{
-                        var selectedImagePath = await selectImageFromCamera();
-
-                        if(selectedImagePath != ''){
-                          Navigator.pop(context);
-                          setState(() {});
-                        }else{
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("No Image Captured...!"),));
-                        }
-                      },
-                      child:
-                      const Padding(padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Icon(Icons.camera_alt,size: 40,),
-                          ],
                         ),
                       ),
-                    ),
-
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          selectedImagePath = ''; // Clear the selected image path
-                        });
-                        Navigator.pop(context); // Close the dialog
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Icon(Icons.clear,size: 40,),
-                          ],
+                      GestureDetector(
+                        onTap: () async {
+                          Navigator.pop(context, await selectImageFromCamera());
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Icon(Icons.camera_alt, size: 40),
+                              Text('Camera'),
+                            ],
+                          ),
                         ),
                       ),
-                    )
-                  ],
-                ),
-                // New row for the "Clear" button
-                const SizedBox(height: 10,)
-              ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context, '');
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Icon(Icons.clear, size: 40),
+                              Text('Cancel'),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
-        ),
+        );
+      },
+    );
+
+    if (path != null && path.isNotEmpty) {
+      setState(() {
+        selectedImagePath = path;
+      });
+      widget.onImagePathChanged(selectedImagePath); // Notify parent
+    } else if (path == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No Image Selected...!")),
       );
-    });
+    }
   }
 
-
-  Future selectImageFromGallery() async{
-    XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery,imageQuality: 50);
-    if (file != null){
+  Future<String> selectImageFromGallery() async {
+    final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (file != null) {
       return file.path;
-    }else{
+    } else {
       return '';
     }
-
   }
 
-  Future selectImageFromCamera() async {
-    XFile? file = await ImagePicker().pickImage(
-      source: ImageSource.camera,
-      imageQuality: 50,
-    );
+  Future<String> selectImageFromCamera() async {
+    final XFile? file = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 50);
     if (file != null) {
-      setState(() {
-        selectedImagePath = file.path;
-      });
+      return file.path;
+    } else {
+      return '';
     }
   }
-
 }

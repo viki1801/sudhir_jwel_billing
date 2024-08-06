@@ -37,7 +37,7 @@ class _StepperPageState extends State<StepperPage> {
   final itemGrossWeightController = TextEditingController();
   final itemNetWeightController = TextEditingController();
   final itemPcsController = TextEditingController();
-  final itemImageController = TextEditingController();
+  //final itemImageController = TextEditingController();
   final itemPurityController = TextEditingController();
   final ratePerGramController = TextEditingController();
   final otherChargesController = TextEditingController();
@@ -59,6 +59,14 @@ class _StepperPageState extends State<StepperPage> {
     });
   }
 
+// method for image
+  String imagePath = ''; // State variable for image path
+  void handleImagePathChanged(String path) {
+    setState(() {
+      imagePath = path;
+    });
+  }
+
   void handleAddItem() {
     final newItem = BillingItem(
       itemName: itemNameController.text,
@@ -66,7 +74,7 @@ class _StepperPageState extends State<StepperPage> {
       itemGrossWeight: double.tryParse(itemGrossWeightController.text) ?? 0.0,
       itemNetWeight: double.tryParse(itemNetWeightController.text) ?? 0.0,
       itemPcs: int.tryParse(itemPcsController.text) ?? 0,
-      itemImage: itemImageController.text,
+      itemImage: imagePath,
       itemPurity: itemPurityController.text,
       ratePerGram: double.tryParse(ratePerGramController.text) ?? 0.0,
       otherCharges: double.tryParse(otherChargesController.text) ?? 0.0,
@@ -161,6 +169,7 @@ class _StepperPageState extends State<StepperPage> {
             ratePerGramController: ratePerGramController,
             otherChargesController: otherChargesController,
             itemPriceController: itemPriceController,
+            onImagePathChanged: handleImagePathChanged,
             onItemPriceChanged: (price) {
               setState(() {
                 itemPrice = price;
@@ -235,6 +244,7 @@ class _StepperPageState extends State<StepperPage> {
         labourCharges: labourCharges,
         gstCharges: gstCharges,
         totalAmount: totalAmount,
+        itemImage: imagePath
       ),
     ),
   ];

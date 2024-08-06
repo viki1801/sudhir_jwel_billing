@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class VerifyPayment extends StatelessWidget {
@@ -13,6 +15,7 @@ class VerifyPayment extends StatelessWidget {
   final double labourCharges;
   final double gstCharges;
   final double totalAmount;
+  final String itemImage;
 
   const VerifyPayment({
     super.key,
@@ -28,6 +31,7 @@ class VerifyPayment extends StatelessWidget {
     required this.labourCharges,
     required this.gstCharges,
     required this.totalAmount,
+    required this.itemImage,
   });
 
   @override
@@ -37,6 +41,16 @@ class VerifyPayment extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Display the item image
+          itemImage.isNotEmpty
+              ? Image.file(
+            File(itemImage),
+            height: 200,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          )
+              : const Text("No Image Available"),
+
           Text("Item Name: $itemName"),
           Text("Purity: $itemPurity"),
           Text("Pieces: $pieces"),
@@ -48,7 +62,6 @@ class VerifyPayment extends StatelessWidget {
           Text("Subtract Mod Price: $subtractModPrice"),
           Text("Labour Charges: ${labourCharges.toStringAsFixed(2)}"),
           Text("GST charges: ${gstCharges.toStringAsFixed(2)}"),
-
           Text("Total Amount: ${totalAmount.toStringAsFixed(2)}"),
         ],
       ),
