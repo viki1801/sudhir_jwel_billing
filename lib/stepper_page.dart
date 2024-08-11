@@ -89,6 +89,11 @@ class _StepperPageState extends State<StepperPage> {
       MaterialPageRoute(
         builder: (context) => AddItemPage(
           billingItems: billingItems,
+          buyerName: nameController.text,
+          buyerContact: contactController.text,
+          buyerAdhar: adharController.text,
+          buyerAddress: addController.text,
+          buyerPan: panController.text,
         ),
       ),
     );

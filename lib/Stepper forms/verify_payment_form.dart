@@ -62,7 +62,7 @@ class VerifyPayment extends StatelessWidget {
           Text("Subtract Mod Price: $subtractModPrice"),
           Text("Labour Charges: ${labourCharges.toStringAsFixed(2)}"),
           Text("GST charges: ${gstCharges.toStringAsFixed(2)}"),
-          Text("Total Amount: ${totalAmount.toStringAsFixed(2)}"),
+          Text("Item At + GST: ${totalAmount.toStringAsFixed(2)}"),
         ],
       ),
     );

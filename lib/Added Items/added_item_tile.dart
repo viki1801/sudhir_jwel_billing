@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sudhir_jwel_billing/model/billing_item.dart';
 
-class AddedItem extends StatelessWidget {
+class AddedItemTile extends StatelessWidget {
   final List<BillingItem> billingItems;
   final void Function(int) onDeleteItem;
   final void Function(int) onEditItem;
 
-  const AddedItem({
+  const AddedItemTile({
     Key? key,
     required this.billingItems,
     required this.onDeleteItem,
@@ -69,21 +69,21 @@ class AddedItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Price: \$${item.itemPrice.toStringAsFixed(2)}'),
+                    Text('Item name: ${item.itemName}'),
+                    Text('Price: ₹ ${item.itemPrice.toStringAsFixed(2)}'),
                     Text('Gross Weight: ${item.itemGrossWeight} g'),
                     Text('Net Weight: ${item.itemNetWeight} g'),
                     Text('Purity: ${item.itemPurity}'),
-                    Text('Rate Per Gram: \$${item.ratePerGram.toStringAsFixed(
+                    Text('Rate Per Gram: ₹ ${item.ratePerGram.toStringAsFixed(
                         2)}'),
-                    Text('Other Charges: \$${item.otherCharges.toStringAsFixed(
+                    Text('Other Charges: ₹ ${item.otherCharges.toStringAsFixed(
                         2)}'),
                     Text(
-                        'Labour Charges: \$${item.labourCharges.toStringAsFixed(
+                        'Labour Charges: ₹ ${item.labourCharges.toStringAsFixed(
                             2)}'),
                     Text(
-                        'Gst Charges: \$${item.gstCharges.toStringAsFixed(2)}'),
-                    Text('Gross Amount: \$${item.grossAmount.toStringAsFixed(
-                        2)}'),
+                        'Gst Charges: ₹ ${item.gstCharges.toStringAsFixed(2)}'),
+                    Text('Total Amount: ₹ ${item.itemPrice + item.otherCharges}'),
                   ],
                 ),
               ),
